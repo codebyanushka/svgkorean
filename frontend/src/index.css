@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-cream: #fffcf4;
+  --color-brand-purple: #5b3cc4;
+  --color-brand-purple-dark: #4a2fa3;
+  --color-brand-yellow: #ffd43b;
+  --color-brand-lavender: #eee9ff;
+  --color-brand-navy: #1e1b2e;
+  --color-brand-border: #e6e1f7;
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+}

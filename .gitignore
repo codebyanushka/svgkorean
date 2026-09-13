@@ -1,0 +1,48 @@
+# Copyrighted source material and derived curriculum data - never commit.
+data/raw/
+data/extracted/
+data/verified/
+!data/raw/.gitkeep
+!data/extracted/.gitkeep
+!data/verified/.gitkeep
+
+# Secrets
+.env
+*.env
+!.env.example
+
+# Node / frontend
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Python / backend
+backend/.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+
+# OS / editor
+.DS_Store
+.vscode/
+
+# Python virtual environments
+.venv/
+.venv-ocr/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# macOS
+.DS_Store
