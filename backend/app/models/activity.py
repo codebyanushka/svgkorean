@@ -21,6 +21,7 @@ class Activity(Base):
     type: Mapped[ActivityType] = mapped_column(Enum(ActivityType), nullable=False)
     prompt: Mapped[str] = mapped_column(Text, nullable=False)
     activity_metadata: Mapped[dict | None] = mapped_column("metadata", JSONB, nullable=True)
+    image_path: Mapped[str | None] = mapped_column(String(512), nullable=True)
     source_block_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("content_blocks.id"), nullable=True)
     curation_status: Mapped[CurationStatus] = mapped_column(
         Enum(CurationStatus), nullable=False, default=CurationStatus.DRAFT

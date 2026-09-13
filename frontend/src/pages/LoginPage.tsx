@@ -7,8 +7,7 @@ import { ArrowRightIcon, EyeIcon, LockIcon, SproutIcon, UserIcon } from '../comp
 
 function homeForRole(role: string): string {
   if (role === 'STUDENT') return '/student'
-  if (role === 'TEACHER') return '/teacher'
-  return '/admin'
+  return '/teacher'
 }
 
 export default function LoginPage() {

@@ -50,7 +50,6 @@ def require_roles(*allowed_roles: Role) -> Callable[[User], User]:
     return checker
 
 
-require_admin = require_roles(Role.ADMIN)
 require_teacher = require_roles(Role.TEACHER)
 require_student = require_roles(Role.STUDENT)
-require_staff = require_roles(Role.ADMIN, Role.TEACHER)
+require_staff = require_roles(Role.TEACHER)

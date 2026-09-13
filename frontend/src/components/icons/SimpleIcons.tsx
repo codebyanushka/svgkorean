@@ -168,3 +168,77 @@ export function CalendarIcon({ className }: IconProps) {
     </svg>
   )
 }
+
+export function ArrowLeftIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className} aria-hidden="true">
+      <path d="M20 12H4M11 5l-7 7 7 7" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+export function HeadphonesIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} aria-hidden="true">
+      <path d="M4 14v-2a8 8 0 0 1 16 0v2" strokeLinecap="round" />
+      <rect x="3" y="14" width="4.5" height="6" rx="1.5" />
+      <rect x="16.5" y="14" width="4.5" height="6" rx="1.5" />
+    </svg>
+  )
+}
+
+export function DocumentIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} aria-hidden="true">
+      <path d="M6 3.5h8l4 4V20a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z" strokeLinejoin="round" />
+      <path d="M9 12h6M9 15.5h6M9 8.5h3" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+export function PencilIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} aria-hidden="true">
+      <path d="M4 20l.9-4 10.6-10.6a2 2 0 0 1 2.8 0l.3.3a2 2 0 0 1 0 2.8L8 19.1 4 20Z" strokeLinejoin="round" />
+      <path d="M13.5 6.5l3 3" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+export function SearchIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} aria-hidden="true">
+      <circle cx="10.5" cy="10.5" r="6.5" />
+      <path d="M20 20l-4.8-4.8" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+export function ShuffleIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} aria-hidden="true">
+      <path d="M4 6h3.5L16 18h4M4 18h3.5L11 13" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M17 6h3M20 6v3M20 6l-4 4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M17 18h3M20 18v-3M20 18l-4-4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+export function XCircleIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} aria-hidden="true">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M9.5 9.5l5 5M14.5 9.5l-5 5" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+export function ClipboardCheckIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} aria-hidden="true">
+      <rect x="5" y="4.5" width="14" height="16" rx="1.5" strokeLinejoin="round" />
+      <path d="M9 4.5V3.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1" strokeLinejoin="round" />
+      <path d="M9 13l2 2 4-4.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}

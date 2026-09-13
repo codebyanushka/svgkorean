@@ -1,12 +1,13 @@
 """Bootstrap script for creating a user account.
 
-There is no public signup and no HTTP user-creation endpoint yet (admin user
-management is a separate, later API - see todo #4). This script is the only
-way to create the first ADMIN account and any TEACHER/STUDENT accounts an
-operator wants to add by hand. Run manually, never called by the app itself.
+There is no public HTTP admin-user-creation endpoint - this script is the
+only way to create TEACHER accounts by hand. STUDENT accounts are normally
+created directly by a teacher via POST /api/v1/teacher/students (see the
+"Add Student" flow in the teacher dashboard). Run manually, never called by
+the app itself.
 
 Usage (from backend/, with .venv active):
-    python scripts/create_user.py --username admin --password <pw> --role ADMIN
+    python scripts/create_user.py --username teacher1 --password <pw> --role TEACHER
 """
 
 import argparse

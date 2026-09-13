@@ -93,7 +93,7 @@ def test_role_guard_allows_matching_role():
 def test_role_guard_rejects_wrong_role():
     from app.api.deps import require_roles
 
-    checker = require_roles(Role.ADMIN)
+    checker = require_roles(Role.STUDENT)
     teacher = User(username="t", hashed_password="x", role=Role.TEACHER)
 
     with pytest.raises(HTTPException) as exc_info:

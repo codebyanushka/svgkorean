@@ -9,7 +9,6 @@ from app.db.base import Base
 
 
 class Role(str, enum.Enum):
-    ADMIN = "ADMIN"
     TEACHER = "TEACHER"
     STUDENT = "STUDENT"
 
@@ -22,3 +21,4 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[Role] = mapped_column(Enum(Role), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

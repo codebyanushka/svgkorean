@@ -28,4 +28,6 @@ export interface Activity {
   prompt: string
   metadata: Record<string, unknown> | null
   options: ActivityOption[]
+  image_url: string | null
+  source: string | null
 }

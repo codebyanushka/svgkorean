@@ -1,4 +1,4 @@
-export type Role = 'ADMIN' | 'TEACHER' | 'STUDENT'
+export type Role = 'TEACHER' | 'STUDENT'
 
 export interface AuthUser {
   id: string

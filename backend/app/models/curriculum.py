@@ -51,8 +51,10 @@ class Vocabulary(Base):
     lesson_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("lessons.id"), nullable=False)
     korean: Mapped[str] = mapped_column(String(255), nullable=False)
     english: Mapped[str] = mapped_column(String(255), nullable=False)
+    romanization: Mapped[str | None] = mapped_column(String(255), nullable=True)
     part_of_speech: Mapped[str | None] = mapped_column(String(64), nullable=True)
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    image_path: Mapped[str | None] = mapped_column(String(512), nullable=True)
     source_block_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("content_blocks.id"), nullable=True)
     curation_status: Mapped[CurationStatus] = mapped_column(
         Enum(CurationStatus), nullable=False, default=CurationStatus.DRAFT

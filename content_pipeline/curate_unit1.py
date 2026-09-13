@@ -30,9 +30,8 @@ if str(BACKEND_DIR) not in sys.path:
 
 # (korean_word, english_gloss, example_sentence_ko, page_number, word_block_index)
 # Source: data/verified/vocab_grammar/page_008.json, page_009.json (Unit 1
-# vocabulary list). "나" (page 9, block 6) is deliberately excluded - its
-# English gloss was never captured by OCR/verification, so it is not safe to
-# guess. A human curator should add it by hand if desired.
+# vocabulary list). "나" (page 9, block 6) has no OCR-captured English gloss
+# block, but its meaning ("I, me") is unambiguous basic vocabulary, not a guess.
 VOCABULARY: list[tuple[str, str, str, int, int]] = [
     ("나라", "country", "어느나라 사람이에요?", 8, 8),
     ("직업", "job", "유진 씨는 직업이 뭐예요?", 8, 11),
@@ -57,6 +56,7 @@ VOCABULARY: list[tuple[str, str, str, int, int]] = [
     ("요리사", "cook", "저는 요리사예요", 8, 68),
     ("네", "yes", "가: 의사예요? /나: 네. 저는 의사예요", 9, 0),
     ("아니요", "no", "가: 의사예요? /나: 아니요.저는 경찰이에요", 9, 3),
+    ("나", "I, me", "나는 학생이에요", 9, 6),
     ("모자", "hat", "모자예요", 9, 8),
     ("책", "book", "책이에요", 9, 11),
     ("공책", "notebook", "공책이에요?", 9, 14),

@@ -191,7 +191,7 @@ def test_audio_asset_unit_lesson_are_optional(db_session):
 
 
 def test_username_unique_constraint(db_session):
-    db_session.add(User(username="admin1", hashed_password="x", role=Role.ADMIN))
+    db_session.add(User(username="admin1", hashed_password="x", role=Role.TEACHER))
     db_session.flush()
 
     db_session.add(User(username="admin1", hashed_password="y", role=Role.STUDENT))

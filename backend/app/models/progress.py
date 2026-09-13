@@ -37,11 +37,12 @@ class Attempt(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), nullable=False)
-    activity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("activities.id"), nullable=False)
+    activity_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("activities.id"), nullable=True)
     lesson_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("lessons.id"), nullable=False)
     vocabulary_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("vocabulary.id"), nullable=True)
     grammar_point_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("grammar_points.id"), nullable=True)
     practice_mode: Mapped[PracticeMode | None] = mapped_column(Enum(PracticeMode), nullable=True)
+    ui_mode: Mapped[str | None] = mapped_column(String(32), nullable=True)
 
     submitted_answer: Mapped[str] = mapped_column(Text, nullable=False)
     normalized_answer: Mapped[str | None] = mapped_column(Text, nullable=True)

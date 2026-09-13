@@ -9,13 +9,15 @@ import {
   HistoryIcon,
   HomeIcon,
   LogoutIcon,
+  SearchIcon,
   SettingsIcon,
   SproutIcon,
 } from '../components/icons/SimpleIcons'
 
 const navItems = [
   { to: '/student', label: '홈', icon: HomeIcon, end: true },
-  { to: '/student/learn', label: '레슨', icon: BookIcon, end: false },
+  { to: '/student/vocab', label: '단어 학습', icon: BookIcon, end: false },
+  { to: '/student/search', label: '검색', icon: SearchIcon, end: false },
   { to: '/student/review', label: '복습', icon: HistoryIcon, end: false },
   { to: '/student/progress', label: '나의 학습', icon: ChartIcon, end: false },
 ]

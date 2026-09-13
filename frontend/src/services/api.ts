@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
 const TOKEN_STORAGE_KEY = 'hangugeo_token'
 
 export class ApiError extends Error {
@@ -43,6 +43,29 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> 
 
   if (response.status === 204) {
     return undefined as T
+  }
+
+  return response.json() as Promise<T>
+}
+
+// For multipart/form-data uploads - deliberately omits the JSON content-type
+// so the browser can set the correct multipart boundary itself.
+export async function apiUpload<T>(path: string, formData: FormData): Promise<T> {
+  const token = getStoredToken()
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method: 'POST',
+    body: formData,
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  })
+
+  if (!response.ok) {
+    const detail = await response
+      .json()
+      .then((body: { detail?: string }) => body.detail)
+      .catch(() => undefined)
+    throw new ApiError(detail ?? `Request to ${path} failed`, response.status)
   }
 
   return response.json() as Promise<T>

@@ -199,13 +199,13 @@ def test_teacher_sees_only_assigned_students(client, db_session):
 
 
 def test_curation_workflow_draft_to_canonical(client, db_session):
-    admin = _make_user(db_session, "root_admin", role=Role.ADMIN)
+    admin = _make_user(db_session, "root_teacher", role=Role.TEACHER)
     lesson = _make_canonical_lesson(db_session)
     vocab = Vocabulary(lesson_id=lesson.id, korean="안나", english="Anna", curation_status=CurationStatus.DRAFT)
     db_session.add(vocab)
     db_session.commit()
 
-    token = _login(client, "root_admin", "pw12345")
+    token = _login(client, "root_teacher", "pw12345")
     headers = _auth_headers(token)
 
     queue = client.get("/api/v1/curation/vocabulary", headers=headers)
@@ -219,7 +219,7 @@ def test_curation_workflow_draft_to_canonical(client, db_session):
     )
     assert approve.status_code == 200
     assert approve.json()["curation_status"] == "HUMAN_APPROVED"
-    assert approve.json()["reviewed_by"] == "root_admin"
+    assert approve.json()["reviewed_by"] == "root_teacher"
 
     publish = client.post(
         f"/api/v1/curation/vocabulary/{vocab.id}/transition",

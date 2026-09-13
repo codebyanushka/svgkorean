@@ -20,3 +20,5 @@ class ActivityRead(BaseModel):
     prompt: str
     metadata: dict | None = None
     options: list[ActivityOptionRead] = []
+    image_url: str | None = None
+    source: str | None = None

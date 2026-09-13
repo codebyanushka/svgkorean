@@ -20,6 +20,7 @@ export interface Vocabulary {
   english: string
   part_of_speech: string | null
   notes: string | null
+  image_url: string | null
 }
 
 export interface GrammarPoint {
@@ -27,6 +28,15 @@ export interface GrammarPoint {
   name_ko: string
   name_en: string | null
   explanation_en: string | null
+}
+
+export interface AudioAsset {
+  id: string
+  original_filename: string
+  source_type: string
+  duration_seconds: number | null
+  verification_status: string
+  url: string
 }
 
 export interface LessonDetail {

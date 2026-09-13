@@ -1,6 +1,7 @@
 import { apiFetch } from './api'
 import type {
   AttemptResult,
+  AudioAsset,
   GrammarProgress,
   LessonDetail,
   Progress,
@@ -16,6 +17,10 @@ export function listUnits(): Promise<Unit[]> {
 
 export function listUnitLessons(unitNumber: string): Promise<{ id: string; unit_id: string; title: string }[]> {
   return apiFetch(`/api/v1/student/units/${unitNumber}/lessons`)
+}
+
+export function listUnitAudio(unitNumber: string): Promise<AudioAsset[]> {
+  return apiFetch<AudioAsset[]>(`/api/v1/student/units/${unitNumber}/audio`)
 }
 
 export function getLessonDetail(lessonId: string): Promise<LessonDetail> {

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { listStudents } from '../../services/teacher'
 import type { StudentSummary } from '../../types/teacher'
 import { ApiError } from '../../services/api'
@@ -23,22 +24,35 @@ export default function StudentsPage() {
   }, [])
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-xl font-semibold">Your students</h1>
+    <div className="space-y-6 py-6">
+      <div>
+        <h1 className="text-2xl font-extrabold text-brand-navy">Your students</h1>
+        <p className="text-sm text-brand-navy/50">Click a student to see their vocabulary profile</p>
+      </div>
 
       {error && <p className="text-sm text-rose-600">{error}</p>}
-      {!error && students === null && <p className="text-sm text-slate-500">Loading...</p>}
+      {!error && students === null && <p className="text-sm text-brand-navy/50">Loading...</p>}
       {students !== null && students.length === 0 && (
-        <p className="text-sm text-slate-500">No students assigned to you yet.</p>
+        <p className="text-sm text-brand-navy/60">No students assigned to you yet.</p>
       )}
 
-      <ul className="space-y-3">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {students?.map((student) => (
-          <li key={student.id} className="rounded-lg border border-slate-200 bg-white p-4 text-sm">
-            {student.username}
-          </li>
+          <Link
+            key={student.id}
+            to={`/teacher/students/${student.id}`}
+            className="flex items-center justify-between rounded-2xl border border-brand-border bg-white/95 p-4 transition hover:shadow-md"
+          >
+            <span className="flex items-center gap-3">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-purple text-sm font-semibold text-white">
+                {student.username[0]?.toUpperCase()}
+              </span>
+              <span className="font-bold text-brand-navy">{student.username}</span>
+            </span>
+            <span className="text-xs text-brand-navy/40">View profile &rarr;</span>
+          </Link>
         ))}
-      </ul>
+      </div>
     </div>
   )
 }

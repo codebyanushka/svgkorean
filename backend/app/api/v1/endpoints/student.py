@@ -6,9 +6,10 @@ from sqlalchemy.orm import Session
 from app.api.deps import require_student
 from app.db.session import get_db
 from app.models.user import User
+from app.models.content_source import ContentBlock, ContentSource
 from app.repositories import activity_repository, attempt_repository, curriculum_repository, progress_repository
 from app.schemas.activity import ActivityOptionRead, ActivityRead
-from app.schemas.curriculum import GrammarPointRead, LessonDetailRead, UnitRead, VocabularyRead
+from app.schemas.curriculum import AudioAssetRead, GrammarPointRead, LessonDetailRead, UnitRead, VocabularyRead
 from app.schemas.progress import (
     AttemptCreate,
     AttemptResult,
@@ -29,6 +30,12 @@ from app.services.grading_service import (
 router = APIRouter(prefix="/student", tags=["student"], dependencies=[Depends(require_student)])
 
 
+def _image_url(image_path: str | None) -> str | None:
+    if image_path is None:
+        return None
+    return f"/media/images/{image_path.removeprefix('data/extracted/media/')}"
+
+
 @router.get("/units", response_model=list[UnitRead])
 def list_units(db: Session = Depends(get_db)) -> list[UnitRead]:
     # No lesson locking - all 10 units are always returned unlocked.
@@ -44,6 +51,25 @@ def list_unit_lessons(unit_number: str, db: Session = Depends(get_db)):
     return [{"id": lesson.id, "unit_id": lesson.unit_id, "title": lesson.title} for lesson in lessons]
 
 
+@router.get("/units/{unit_number}/audio", response_model=list[AudioAssetRead])
+def list_unit_audio(unit_number: str, db: Session = Depends(get_db)) -> list[AudioAssetRead]:
+    unit = curriculum_repository.get_unit_by_number(db, unit_number)
+    if unit is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Unit not found")
+    assets = curriculum_repository.list_audio_for_unit(db, unit.id)
+    return [
+        AudioAssetRead(
+            id=a.id,
+            original_filename=a.original_filename,
+            source_type=a.source_type,
+            duration_seconds=a.duration_seconds,
+            verification_status=a.verification_status,
+            url=f"/media/audio/{a.file_path.removeprefix('data/raw/audio/')}",
+        )
+        for a in assets
+    ]
+
+
 @router.get("/lessons/{lesson_id}", response_model=LessonDetailRead)
 def get_lesson_detail(lesson_id: uuid.UUID, db: Session = Depends(get_db)) -> LessonDetailRead:
     lesson = curriculum_repository.get_lesson(db, lesson_id)
@@ -55,7 +81,17 @@ def get_lesson_detail(lesson_id: uuid.UUID, db: Session = Depends(get_db)) -> Le
         id=lesson.id,
         unit_id=lesson.unit_id,
         title=lesson.title,
-        vocabulary=[VocabularyRead.model_validate(v) for v in vocabulary],
+        vocabulary=[
+            VocabularyRead(
+                id=v.id,
+                korean=v.korean,
+                english=v.english,
+                part_of_speech=v.part_of_speech,
+                notes=v.notes,
+                image_url=_image_url(v.image_path),
+            )
+            for v in vocabulary
+        ],
         grammar_points=[GrammarPointRead.model_validate(g) for g in grammar_points],
     )
 
@@ -63,6 +99,18 @@ def get_lesson_detail(lesson_id: uuid.UUID, db: Session = Depends(get_db)) -> Le
 @router.get("/lessons/{lesson_id}/activities", response_model=list[ActivityRead])
 def list_lesson_activities(lesson_id: uuid.UUID, db: Session = Depends(get_db)) -> list[ActivityRead]:
     activities = activity_repository.list_canonical_activities(db, lesson_id)
+
+    block_ids = [a.source_block_id for a in activities if a.source_block_id is not None]
+    source_by_block: dict[uuid.UUID, str] = {}
+    if block_ids:
+        rows = (
+            db.query(ContentBlock.id, ContentSource.source_type)
+            .join(ContentSource, ContentBlock.source_id == ContentSource.id)
+            .filter(ContentBlock.id.in_(block_ids))
+            .all()
+        )
+        source_by_block = {block_id: source_type.value for block_id, source_type in rows}
+
     return [
         ActivityRead(
             id=a.id,
@@ -71,6 +119,8 @@ def list_lesson_activities(lesson_id: uuid.UUID, db: Session = Depends(get_db)) 
             prompt=a.prompt,
             metadata=a.activity_metadata,
             options=[ActivityOptionRead(id=o.id, text=o.text) for o in a.options],
+            image_url=_image_url(a.image_path),
+            source=source_by_block.get(a.source_block_id) if a.source_block_id else None,
         )
         for a in activities
     ]

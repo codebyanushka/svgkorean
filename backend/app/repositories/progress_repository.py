@@ -57,6 +57,21 @@ def list_vocabulary_progress_for_user(db: Session, user_id: uuid.UUID) -> list[V
     return list(db.scalars(select(VocabularyProgress).where(VocabularyProgress.user_id == user_id)))
 
 
+def list_vocabulary_progress_for_words(
+    db: Session, user_id: uuid.UUID, vocabulary_ids: list[uuid.UUID]
+) -> list[VocabularyProgress]:
+    if not vocabulary_ids:
+        return []
+    return list(
+        db.scalars(
+            select(VocabularyProgress).where(
+                VocabularyProgress.user_id == user_id,
+                VocabularyProgress.vocabulary_id.in_(vocabulary_ids),
+            )
+        )
+    )
+
+
 def list_grammar_progress_for_user(db: Session, user_id: uuid.UUID) -> list[GrammarProgress]:
     return list(db.scalars(select(GrammarProgress).where(GrammarProgress.user_id == user_id)))
 

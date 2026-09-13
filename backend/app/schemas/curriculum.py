@@ -2,6 +2,8 @@ import uuid
 
 from pydantic import BaseModel
 
+from app.models.enums import SourceType, VerificationStatus
+
 
 class UnitRead(BaseModel):
     id: uuid.UUID
@@ -26,6 +28,7 @@ class VocabularyRead(BaseModel):
     english: str
     part_of_speech: str | None
     notes: str | None
+    image_url: str | None = None
 
     model_config = {"from_attributes": True}
 
@@ -45,3 +48,12 @@ class LessonDetailRead(BaseModel):
     title: str
     vocabulary: list[VocabularyRead]
     grammar_points: list[GrammarPointRead]
+
+
+class AudioAssetRead(BaseModel):
+    id: uuid.UUID
+    original_filename: str
+    source_type: SourceType
+    duration_seconds: float | None
+    verification_status: VerificationStatus
+    url: str
