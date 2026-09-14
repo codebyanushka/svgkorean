@@ -50,7 +50,7 @@ export default function TeacherLayout() {
             </span>
             <div>
               <p className="text-xl font-extrabold tracking-tight text-brand-purple">한국어</p>
-              <p className="text-[10px] font-semibold tracking-[0.2em] text-brand-navy/50">HANGUGEO · TEACHER</p>
+              <p className="text-[10px] font-semibold tracking-[0.2em] text-brand-navy/50">HANGUGEO · 선생님</p>
             </div>
           </div>
 
@@ -150,7 +150,7 @@ export default function TeacherLayout() {
           {/* desktop header */}
           <header className="hidden items-center justify-between gap-4 px-8 py-6 lg:flex xl:px-10">
             <div className="text-sm leading-snug text-brand-navy/70">
-              <p>Teacher Dashboard</p>
+              <p>선생님 Dashboard</p>
               <p>Track your students' progress.</p>
             </div>
             <div className="flex items-center gap-3">

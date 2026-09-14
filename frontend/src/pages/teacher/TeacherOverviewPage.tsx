@@ -64,7 +64,7 @@ export default function TeacherOverviewPage() {
         <h1 className="text-3xl font-extrabold text-brand-navy [text-shadow:0_2px_12px_rgba(255,252,244,0.9)]">
           안녕하세요, {user?.username} 선생님 👋
         </h1>
-        <p className="mt-1 text-xl font-semibold text-brand-navy/80">Teacher Dashboard</p>
+        <p className="mt-1 text-xl font-semibold text-brand-navy/80">선생님 Dashboard</p>
         <p className="mt-3 text-sm text-brand-navy/60">
           {students.length}명의 학생 · {activeCount} active this week
         </p>
