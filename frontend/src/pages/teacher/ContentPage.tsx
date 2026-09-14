@@ -164,28 +164,28 @@ export default function ContentPage() {
                   <input
                     defaultValue={w.korean}
                     onBlur={(e) => e.target.value !== w.korean && handleFieldSave(w.id, 'korean', e.target.value)}
-                    className="w-24 rounded border border-transparent px-1 py-0.5 hover:border-brand-border focus:border-brand-purple focus:outline-none"
+                    className="w-32 rounded border border-transparent px-1 py-0.5 hover:border-brand-border focus:border-brand-purple focus:outline-none"
                   />
                 </td>
                 <td className="px-4 py-2 text-brand-navy/50">
                   <input
                     defaultValue={w.romanization ?? ''}
                     onBlur={(e) => e.target.value !== w.romanization && handleFieldSave(w.id, 'romanization', e.target.value)}
-                    className="w-24 rounded border border-transparent px-1 py-0.5 hover:border-brand-border focus:border-brand-purple focus:outline-none"
+                    className="w-28 rounded border border-transparent px-1 py-0.5 hover:border-brand-border focus:border-brand-purple focus:outline-none"
                   />
                 </td>
                 <td className="px-4 py-2">
                   <input
                     defaultValue={w.english}
                     onBlur={(e) => e.target.value !== w.english && handleFieldSave(w.id, 'english', e.target.value)}
-                    className="w-28 rounded border border-transparent px-1 py-0.5 hover:border-brand-border focus:border-brand-purple focus:outline-none"
+                    className="w-48 rounded border border-transparent px-1 py-0.5 hover:border-brand-border focus:border-brand-purple focus:outline-none"
                   />
                 </td>
                 <td className="px-4 py-2 text-brand-navy/50">
                   <input
                     defaultValue={w.notes ?? ''}
                     onBlur={(e) => e.target.value !== w.notes && handleFieldSave(w.id, 'notes', e.target.value)}
-                    className="w-48 rounded border border-transparent px-1 py-0.5 hover:border-brand-border focus:border-brand-purple focus:outline-none"
+                    className="w-80 rounded border border-transparent px-1 py-0.5 hover:border-brand-border focus:border-brand-purple focus:outline-none"
                   />
                 </td>
                 <td className="px-4 py-2">

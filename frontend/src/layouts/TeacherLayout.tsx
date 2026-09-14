@@ -170,7 +170,7 @@ export default function TeacherLayout() {
             </div>
           </header>
 
-          <main className="flex-1 px-4 pb-10 pt-4 sm:px-6 lg:px-8 lg:pt-0 xl:px-10">
+          <main className="flex-1 px-3 pb-10 pt-4 sm:px-4 lg:px-6 lg:pt-0 xl:px-8">
             <Outlet />
           </main>
         </div>
