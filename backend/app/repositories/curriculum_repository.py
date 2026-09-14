@@ -51,10 +51,12 @@ def create_lesson(db: Session, unit_id: uuid.UUID, title: str) -> Lesson:
 def list_canonical_vocabulary(db: Session, lesson_id: uuid.UUID) -> list[Vocabulary]:
     return list(
         db.scalars(
-            select(Vocabulary).where(
+            select(Vocabulary)
+            .where(
                 Vocabulary.lesson_id == lesson_id,
                 Vocabulary.curation_status == CurationStatus.CANONICAL,
             )
+            .order_by(Vocabulary.sort_order.asc().nulls_last(), Vocabulary.created_at)
         )
     )
 
@@ -87,7 +89,13 @@ def list_all_vocabulary_for_unit(db: Session, unit_id: uuid.UUID) -> list[Vocabu
     lesson_ids = db.scalars(select(Lesson.id).where(Lesson.unit_id == unit_id)).all()
     if not lesson_ids:
         return []
-    return list(db.scalars(select(Vocabulary).where(Vocabulary.lesson_id.in_(lesson_ids)).order_by(Vocabulary.created_at)))
+    return list(
+        db.scalars(
+            select(Vocabulary)
+            .where(Vocabulary.lesson_id.in_(lesson_ids))
+            .order_by(Vocabulary.sort_order.asc().nulls_last(), Vocabulary.created_at)
+        )
+    )
 
 
 def create_vocabulary(db: Session, **fields) -> Vocabulary:

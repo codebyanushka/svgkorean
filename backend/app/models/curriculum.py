@@ -56,6 +56,7 @@ class Vocabulary(Base):
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     image_path: Mapped[str | None] = mapped_column(String(512), nullable=True)
     source_block_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("content_blocks.id"), nullable=True)
+    sort_order: Mapped[int | None] = mapped_column(nullable=True)
     curation_status: Mapped[CurationStatus] = mapped_column(
         Enum(CurationStatus), nullable=False, default=CurationStatus.DRAFT
     )
