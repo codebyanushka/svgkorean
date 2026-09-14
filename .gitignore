@@ -46,3 +46,7 @@ __pycache__/
 
 # macOS
 .DS_Store
+
+# Firebase
+firebase-debug.log
+.firebase/
