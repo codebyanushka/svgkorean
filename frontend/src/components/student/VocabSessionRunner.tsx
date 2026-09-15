@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { submitVocabAttempt } from '../../services/vocabLab'
+import { ApiError } from '../../services/api'
 import type { VocabQuestion } from '../../types/vocabLab'
 
 const PROMPT_LABEL: Record<string, string> = {
@@ -24,17 +25,21 @@ export default function VocabSessionRunner({
   const [score, setScore] = useState({ correct: 0, total: 0 })
   const [missed, setMissed] = useState<string[]>([])
   const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const question = questions[index]
 
   async function handleAnswer(answer: string) {
     if (result !== null || !answer || submitting) return
     setSubmitting(true)
+    setError(null)
     try {
       const res = await submitVocabAttempt(question.vocabulary_id, question.question_type, answer, uiMode)
       setResult({ isCorrect: res.is_correct, correctAnswer: res.correct_answer })
       setScore((prev) => ({ correct: prev.correct + (res.is_correct ? 1 : 0), total: prev.total + 1 }))
       if (!res.is_correct) setMissed((prev) => [...prev, question.vocabulary_id])
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Could not submit your answer. Please try again.')
     } finally {
       setSubmitting(false)
     }
@@ -44,6 +49,7 @@ export default function VocabSessionRunner({
     const nextIndex = index + 1
     setResult(null)
     setTextAnswer('')
+    setError(null)
     if (nextIndex >= questions.length) {
       onFinish?.({ correct: score.correct, total: score.total, missedVocabularyIds: missed })
     }
@@ -96,7 +102,7 @@ export default function VocabSessionRunner({
             disabled={result !== null || submitting}
             className="rounded-xl bg-brand-purple px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
           >
-            확인
+            {submitting ? '확인 중...' : '확인'}
           </button>
         </div>
       ) : (
@@ -112,6 +118,19 @@ export default function VocabSessionRunner({
               {option}
             </button>
           ))}
+        </div>
+      )}
+
+      {error && (
+        <div className="mt-4 flex items-center justify-between rounded-xl bg-rose-50 p-3">
+          <p className="text-sm font-semibold text-rose-600">{error}</p>
+          <button
+            type="button"
+            onClick={() => setError(null)}
+            className="rounded-lg bg-rose-600 px-4 py-1.5 text-sm font-semibold text-white"
+          >
+            다시 시도
+          </button>
         </div>
       )}
 

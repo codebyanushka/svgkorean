@@ -49,9 +49,14 @@ export default function QuickRecallPage() {
   async function handleAnswer(answer: string) {
     if (!questions || finished || index >= questions.length) return
     const q = questions[index]
-    const res = await submitVocabAttempt(q.vocabulary_id, q.question_type, answer, 'quick_recall')
-    setScore((prev) => ({ correct: prev.correct + (res.is_correct ? 1 : 0), total: prev.total + 1 }))
-    if (!res.is_correct) setMissedWords((prev) => [...prev, q.prompt || q.vocabulary_id])
+    try {
+      const res = await submitVocabAttempt(q.vocabulary_id, q.question_type, answer, 'quick_recall')
+      setScore((prev) => ({ correct: prev.correct + (res.is_correct ? 1 : 0), total: prev.total + 1 }))
+      if (!res.is_correct) setMissedWords((prev) => [...prev, q.prompt || q.vocabulary_id])
+    } catch {
+      // Network hiccup recording this one answer - don't let it freeze the
+      // 60-second challenge, just move on to the next word.
+    }
     setTextAnswer('')
     setIndex((i) => {
       const next = i + 1

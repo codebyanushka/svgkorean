@@ -48,7 +48,9 @@ export default function MatchingPage() {
     if (!koreanWord) return
     const englishWord = round.find((w) => w.id === englishId)
     const isMatch = koreanId === englishId
-    await submitVocabAttempt(koreanId, 'multiple_choice', englishWord?.english ?? '', 'matching')
+    // Correctness is decided client-side (the ids either match or they
+    // don't) - update the game immediately so a slow/failed network call
+    // recording the attempt never blocks or freezes gameplay.
     if (isMatch) {
       setMatched((prev) => new Set(prev).add(koreanId))
     } else {
@@ -57,6 +59,12 @@ export default function MatchingPage() {
     }
     setSelectedKorean(null)
     setSelectedEnglish(null)
+    try {
+      await submitVocabAttempt(koreanId, 'multiple_choice', englishWord?.english ?? '', 'matching')
+    } catch {
+      // Progress tracking for this one pair may not have been recorded -
+      // silent, since the game itself already moved on above.
+    }
   }
 
   function handlePickKorean(id: string) {

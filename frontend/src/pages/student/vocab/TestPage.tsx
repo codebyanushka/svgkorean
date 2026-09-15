@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import UnitSubPageHeader from '../../../components/student/UnitSubPageHeader'
 import { getRecallSession, getUnitWords, submitVocabAttempt } from '../../../services/vocabLab'
+import { ApiError } from '../../../services/api'
 import type { QuestionType, VocabQuestion, VocabWord } from '../../../types/vocabLab'
 
 type Stage = 'quiz' | 'matching' | 'results'
@@ -38,6 +39,8 @@ export default function TestPage() {
   const [correctCount, setCorrectCount] = useState(0)
   const [totalCount, setTotalCount] = useState(0)
   const [missed, setMissed] = useState<MissedWord[]>([])
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const [matchWords, setMatchWords] = useState<VocabWord[]>([])
   const [matched, setMatched] = useState<Set<string>>(new Set())
@@ -73,21 +76,30 @@ export default function TestPage() {
   const question = questions?.[qIndex]
 
   async function handleAnswer(value: string) {
-    if (!question || qResult !== null || !value) return
-    const res = await submitVocabAttempt(question.vocabulary_id, question.question_type, value, 'test')
-    setQResult({ isCorrect: res.is_correct, correctAnswer: res.correct_answer })
-    setTotalCount((c) => c + 1)
-    if (res.is_correct) {
-      setCorrectCount((c) => c + 1)
-    } else {
-      const word = wordById.get(question.vocabulary_id)
-      if (word) setMissed((prev) => [...prev, { vocabularyId: word.id, korean: word.korean, english: word.english }])
+    if (!question || qResult !== null || !value || submitting) return
+    setSubmitting(true)
+    setError(null)
+    try {
+      const res = await submitVocabAttempt(question.vocabulary_id, question.question_type, value, 'test')
+      setQResult({ isCorrect: res.is_correct, correctAnswer: res.correct_answer })
+      setTotalCount((c) => c + 1)
+      if (res.is_correct) {
+        setCorrectCount((c) => c + 1)
+      } else {
+        const word = wordById.get(question.vocabulary_id)
+        if (word) setMissed((prev) => [...prev, { vocabularyId: word.id, korean: word.korean, english: word.english }])
+      }
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Could not submit your answer. Please try again.')
+    } finally {
+      setSubmitting(false)
     }
   }
 
   function handleNextQuestion() {
     setQResult(null)
     setTextAnswer('')
+    setError(null)
     const next = qIndex + 1
     if (questions && next >= questions.length) {
       const pool = words ? shuffled(words).slice(0, Math.min(MATCHING_ROUND_SIZE, words.length)) : []
@@ -104,7 +116,8 @@ export default function TestPage() {
   async function tryMatch(koreanId: string, englishId: string) {
     const englishWord = matchWords.find((w) => w.id === englishId)
     const isMatch = koreanId === englishId
-    await submitVocabAttempt(koreanId, 'multiple_choice', englishWord?.english ?? '', 'test')
+    // Correctness is decided client-side - update immediately so a slow/
+    // failed network call recording the attempt never freezes the game.
     setTotalCount((c) => c + 1)
     if (isMatch) {
       setCorrectCount((c) => c + 1)
@@ -115,6 +128,12 @@ export default function TestPage() {
     }
     setSelectedKorean(null)
     setSelectedEnglish(null)
+    try {
+      await submitVocabAttempt(koreanId, 'multiple_choice', englishWord?.english ?? '', 'test')
+    } catch {
+      // Progress tracking for this one pair may not have been recorded -
+      // silent, since the game itself already moved on above.
+    }
   }
 
   function handlePickKorean(id: string) {
@@ -191,10 +210,10 @@ export default function TestPage() {
                 <button
                   type="button"
                   onClick={() => handleAnswer(textAnswer)}
-                  disabled={qResult !== null}
+                  disabled={qResult !== null || submitting}
                   className="rounded-xl bg-brand-purple px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
                 >
-                  확인
+                  {submitting ? '확인 중...' : '확인'}
                 </button>
               </div>
             ) : (
@@ -204,12 +223,25 @@ export default function TestPage() {
                     key={option}
                     type="button"
                     onClick={() => handleAnswer(option)}
-                    disabled={qResult !== null}
+                    disabled={qResult !== null || submitting}
                     className="rounded-xl border border-brand-border bg-white px-4 py-3 text-left text-sm font-medium text-brand-navy transition hover:border-brand-purple disabled:opacity-60"
                   >
                     {option}
                   </button>
                 ))}
+              </div>
+            )}
+
+            {error && (
+              <div className="mt-4 flex items-center justify-between rounded-xl bg-rose-50 p-3">
+                <p className="text-sm font-semibold text-rose-600">{error}</p>
+                <button
+                  type="button"
+                  onClick={() => setError(null)}
+                  className="rounded-lg bg-rose-600 px-4 py-1.5 text-sm font-semibold text-white"
+                >
+                  다시 시도
+                </button>
               </div>
             )}
 

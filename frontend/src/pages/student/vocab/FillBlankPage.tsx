@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import UnitSubPageHeader from '../../../components/student/UnitSubPageHeader'
 import { getUnitWords, submitVocabAttempt } from '../../../services/vocabLab'
+import { ApiError } from '../../../services/api'
 import type { VocabWord } from '../../../types/vocabLab'
 
 function blank(korean: string): { display: string; blankedIndex: number } {
@@ -22,6 +23,8 @@ export default function FillBlankPage() {
   const [answer, setAnswer] = useState('')
   const [result, setResult] = useState<{ isCorrect: boolean; correctAnswer: string } | null>(null)
   const [score, setScore] = useState({ correct: 0, total: 0 })
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!unitNumber) return
@@ -41,16 +44,25 @@ export default function FillBlankPage() {
   }, [words, index])
 
   async function handleSubmit() {
-    if (!words || !answer.trim() || result !== null) return
+    if (!words || !answer.trim() || result !== null || submitting) return
     const word = words[index]
-    const res = await submitVocabAttempt(word.id, 'en_to_ko_written', answer.trim(), 'fill_blank')
-    setResult({ isCorrect: res.is_correct, correctAnswer: res.correct_answer })
-    setScore((prev) => ({ correct: prev.correct + (res.is_correct ? 1 : 0), total: prev.total + 1 }))
+    setSubmitting(true)
+    setError(null)
+    try {
+      const res = await submitVocabAttempt(word.id, 'en_to_ko_written', answer.trim(), 'fill_blank')
+      setResult({ isCorrect: res.is_correct, correctAnswer: res.correct_answer })
+      setScore((prev) => ({ correct: prev.correct + (res.is_correct ? 1 : 0), total: prev.total + 1 }))
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Could not submit your answer. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   function handleNext() {
     setResult(null)
     setAnswer('')
+    setError(null)
     setIndex((i) => i + 1)
   }
 
@@ -105,12 +117,25 @@ export default function FillBlankPage() {
             <button
               type="button"
               onClick={handleSubmit}
-              disabled={result !== null}
+              disabled={result !== null || submitting}
               className="rounded-xl bg-brand-purple px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
             >
-              확인
+              {submitting ? '확인 중...' : '확인'}
             </button>
           </div>
+
+          {error && (
+            <div className="mt-4 flex items-center justify-between rounded-xl bg-rose-50 p-3">
+              <p className="text-sm font-semibold text-rose-600">{error}</p>
+              <button
+                type="button"
+                onClick={() => setError(null)}
+                className="rounded-lg bg-rose-600 px-4 py-1.5 text-sm font-semibold text-white"
+              >
+                다시 시도
+              </button>
+            </div>
+          )}
 
           {result !== null && (
             <div className="mt-4 flex items-center justify-between rounded-xl bg-brand-lavender/30 p-3">

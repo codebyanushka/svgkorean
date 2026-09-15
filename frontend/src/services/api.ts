@@ -24,14 +24,27 @@ export function setStoredToken(token: string | null): void {
 
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const token = getStoredToken()
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...init?.headers,
-    },
-  })
+  const controller = new AbortController()
+  const timeoutId = window.setTimeout(() => controller.abort(), 20_000)
+  let response: Response
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      ...init,
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...init?.headers,
+      },
+    })
+  } catch (err) {
+    if (err instanceof DOMException && err.name === 'AbortError') {
+      throw new ApiError('Request timed out. Please check your connection and try again.', 0)
+    }
+    throw new ApiError('Network error. Please check your connection and try again.', 0)
+  } finally {
+    window.clearTimeout(timeoutId)
+  }
 
   if (!response.ok) {
     const detail = await response
@@ -52,13 +65,26 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> 
 // so the browser can set the correct multipart boundary itself.
 export async function apiUpload<T>(path: string, formData: FormData): Promise<T> {
   const token = getStoredToken()
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method: 'POST',
-    body: formData,
-    headers: {
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-  })
+  const controller = new AbortController()
+  const timeoutId = window.setTimeout(() => controller.abort(), 30_000)
+  let response: Response
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      method: 'POST',
+      body: formData,
+      signal: controller.signal,
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    })
+  } catch (err) {
+    if (err instanceof DOMException && err.name === 'AbortError') {
+      throw new ApiError('Upload timed out. Please check your connection and try again.', 0)
+    }
+    throw new ApiError('Network error. Please check your connection and try again.', 0)
+  } finally {
+    window.clearTimeout(timeoutId)
+  }
 
   if (!response.ok) {
     const detail = await response
